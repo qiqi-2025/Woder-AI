@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Woder AI 工作坊｜你的第一个AI产品，从这里开始</title>
+  <style>
+    :root {
+      --black: #111111;
+      --cream: #fff4d6;
+      --red: #ff3b30;
+      --blue: #1f6fff;
+      --yellow: #ffd83d;
+      --green: #20c56b;
+      --purple: #8b5cf6;
+      --pink: #ff5ca8;
+      --shadow: 8px 8px 0 #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family:
+        "PingFang SC",
+        "Microsoft YaHei",
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255, 216, 61, 0.7) 0 8%, transparent 9%),
+        radial-gradient(circle at 85% 20%, rgba(31, 111, 255, 0.45) 0 10%, transparent 11%),
+        radial-gradient(circle at 80% 75%, rgba(255, 59, 48, 0.55) 0 9%, transparent 10%),
+        linear-gradient(135deg, #fff4d6 0%, #ffe7f0 45%, #dff7ff 100%);
+      color: var(--black);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(17, 17, 17, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17, 17, 17, 0.05) 1px, transparent 1px);
+      background-size: 26px 26px;
+      mix-blend-mode: multiply;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.05) 0px,
+          rgba(0, 0, 0, 0.05) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+      opacity: 0.25;
+      z-index: 999;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 64px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 3px solid var(--black);
+      background: var(--yellow);
+      box-shadow: 4px 4px 0 var(--black);
+      font-weight: 800;
+      transform: rotate(-2deg);
+    }
+
+    .nav-note {
+      max-width: 360px;
+      border: 3px solid var(--black);
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: 5px 5px 0 var(--black);
+      padding: 14px 16px;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 42px;
+      align-items: center;
+      min-height: 620px;
+    }
+
+    .hero h1 {
+      font-size: clamp(52px, 8vw, 104px);
+      line-height: 0.9;
+      margin: 0 0 24px;
+      letter-spacing: -0.08em;
+      text-shadow: 5px 5px 0 rgba(255, 216, 61, 0.9);
+    }
+
+    .hero h1 span {
+      display: block;
+    }
+
+    .hero h1 .en {
+      font-size: clamp(22px, 3vw, 38px);
+      letter-spacing: 0.02em;
+      margin-top: 18px;
+      text-shadow: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .manifesto {
+      position: relative;
+      background: var(--cream);
+      border: 4px solid var(--black);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      max-width: 640px;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .manifesto::before {
+      content: "核心理念";
+      position: absolute;
+      top: -18px;
+      left: 22px;
+      background: var(--red);
+      color: white;
+      border: 3px solid var(--black);
+      padding: 4px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      transform: rotate(-1deg);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    button,
+    .link-button {
+      border: 3px solid var(--black);
+      background: white;
+      box-shadow: 5px 5px 0 var(--black);
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.16s ease;
+      text-decoration: none;
+      color: var(--black);
+    }
+
+    button:hover,
+    .link-button:hover {
+      transform: translate(4px, 4px);
+      box-shadow: 1px 1px 0 var(--black);
+    }
+
+    .primary {
+      background: var(--green);
+    }
+
+    .cube-stage {
+      position: relative;
+      min-height: 520px;
+      display: grid;
+      place-items: center;
+      perspective: 900px;
+    }
+
+    .orbit {
+      position: absolute;
+      width: 430px;
+      height: 430px;
+      border: 3px dashed rgba(17, 17, 17, 0.35);
+      border-radius: 50%;
+      animation: spin 28s linear infinite;
+    }
+
+    .orbit:nth-child(2) {
+      width: 330px;
+      height: 330px;
+      animation-duration: 18s;
+      animation-direction: reverse;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .cube {
+      position: relative;
+      width: 310px;
+      height: 310px;
+      transform-style: preserve-3d;
+      animation: floatCube 5s ease-in-out infinite;
+    }
+
+    @keyframes floatCube {
+      0%, 100% {
+        transform: rotateX(58deg) rotateZ(-38deg) translateY(0);
+      }
+      50% {
+        transform: rotateX(58deg) rotateZ(-38deg) translateY(-18px);
+      }
+    }
+
+    .face {
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      border: 5px solid var(--black);
+      box-shadow: 10px 10px 0 rgba(17, 17, 17, 0.75);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 18px;
+      font-weight: 950;
+      font-size: 24px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      user-select: none;
+    }
+
+    .face small {
+      display: block;
+      margin-top: 8px;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      opacity: 0.75;
+    }
+
+    .face:hover {
+      filter: brightness(1.08);
+      transform: translateZ(42px) scale(1.04) !important;
+      z-index: 4;
+    }
+
+    .f1 {
+      background: var(--yellow);
+      transform: translate3d(20px, 0, 80px);
+    }
+
+    .f2 {
+      background: var(--blue);
+      color: white;
+      transform: translate3d(130px, 70px, 20px);
+    }
+
+    .f3 {
+      background: var(--red);
+      color: white;
+      transform: translate3d(-90px, 78px, 30px);
+    }
+
+    .f4 {
+      background: var(--green);
+      transform: translate3d(22px, 150px, -30px);
+    }
+
+    .f5 {
+      background: var(--pink);
+      transform: translate3d(72px, -112px, -10px);
+    }
+
+    .f6 {
+      background: white;
+      transform: translate3d(-124px, -76px, -20px);
+    }
+
+    .floating-shape {
+      position: absolute;
+      border: 4px solid var(--black);
+      box-shadow: 5px 5px 0 var(--black);
+      animation: drift 6s ease-in-out infinite;
+    }
+
+    .shape-a {
+      width: 62px;
+      height: 62px;
+      background: var(--red);
+      top: 34px;
+      left: 18px;
+      transform: rotate(14deg);
+    }
+
+    .shape-b {
+      width: 90px;
+      height: 48px;
+      background: var(--yellow);
+      right: 8px;
+      bottom: 72px;
+      transform: rotate(-9deg);
+      animation-delay: -2s;
+    }
+
+    .shape-c {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--blue);
+      left: 42px;
+      bottom: 30px;
+      animation-delay: -4s;
+    }
+
+    @keyframes drift {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -18px; }
+    }
+
+    .products {
+      margin-top: 56px;
+    }
+
+    .section-title {
+      display: inline-block;
+      font-size: 34px;
+      margin: 0 0 24px;
+      background: var(--black);
+      color: white;
+      padding: 8px 14px;
+      transform: rotate(-1deg);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .product-card {
+      min-height: 230px;
+      border: 4px solid var(--black);
+      background: white;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: 0.16s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px) rotate(-1deg);
+    }
+
+    .product-card:nth-child(1) { background: #fff0a8; }
+    .product-card:nth-child(2) { background: #bdf7d0; }
+    .product-card:nth-child(3) { background: #b9d4ff; }
+    .product-card:nth-child(4) { background: #ffc1dc; }
+    .product-card:nth-child(5) { background: #d7c2ff; }
+    .product-card:nth-child(6) { background: #ffffff; }
+
+    .product-card::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      right: -30px;
+      bottom: -30px;
+      background: rgba(17, 17, 17, 0.08);
+      border: 4px solid var(--black);
+      transform: rotate(24deg);
+    }
+
+    .product-no {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+
+    .product-card h3 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      line-height: 1.1;
+    }
+
+    .product-card p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.75;
+      max-width: 92%;
+    }
+
+    .workshop-section {
+      margin-top: 72px;
+      border: 4px solid var(--black);
+      background: var(--black);
+      color: white;
+      box-shadow: var(--shadow);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .workshop-section h2 {
+      font-size: 38px;
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      background: var(--yellow);
+      color: var(--black);
+      border: 3px solid white;
+      padding: 8px 12px;
+      font-weight: 900;
+    }
+
+    .about-section {
+      margin-top: 72px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .about-card {
+      border: 4px solid var(--black);
+      background: white;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .about-card h3 {
+      font-size: 28px;
+      margin: 0 0 16px;
+    }
+
+    .about-card p {
+      font-size: 16px;
+      line-height: 1.8;
+      margin: 0 0 12px;
+    }
+
+    .about-card ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .honors {
+      margin-top: 72px;
+    }
+
+    .honor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .honor-card {
+      border: 3px solid var(--black);
+      background: var(--cream);
+      box-shadow: 5px 5px 0 var(--black);
+      padding: 18px;
+      font-size: 15px;
+      line-height: 1.6;
+      cursor: pointer;
+    }
+
+    .cta-section {
+      margin-top: 72px;
+      text-align: center;
+      padding: 48px 24px;
+      background: var(--yellow);
+      border: 5px solid var(--black);
+      box-shadow: 12px 12px 0 var(--black);
+    }
+
+    .cta-section h2 {
+      font-size: 42px;
+      margin: 0 0 16px;
+    }
+
+    .cta-section p {
+      font-size: 20px;
+      margin: 0 0 24px;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.56);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: 86vh;
+      overflow: auto;
+      background: var(--cream);
+      border: 5px solid var(--black);
+      box-shadow: 14px 14px 0 var(--black);
+      padding: 28px;
+      position: relative;
+    }
+
+    .modal h2 {
+      font-size: 38px;
+      line-height: 1.1;
+      margin: 0 0 16px;
+    }
+
+    .modal p {
+      font-size: 17px;
+      line-height: 1.85;
+    }
+
+    .modal ul {
+      padding-left: 22px;
+      line-height: 1.9;
+      font-size: 16px;
+    }
+
+    .close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--red);
+      color: white;
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+    }
+
+    footer {
+      margin-top: 56px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        flex-direction: column;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .cube-stage {
+        min-height: 460px;
+        transform: scale(0.86);
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workshop-section {
+        grid-template-columns: 1fr;
+      }
+
+      .about-section {
+        grid-template-columns: 1fr;
+      }
+
+      .honor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1180px);
+        padding-top: 24px;
+      }
+
+      .hero h1 {
+        font-size: 54px;
+      }
+
+      .manifesto {
+        font-size: 16px;
+      }
+
+      .cube-stage {
+        transform: scale(0.72);
+        transform-origin: center top;
+        min-height: 360px;
+      }
+
+      .product-card h3 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <div class="badge">▣ Woder AI 工作坊</div>
+      <div class="nav-note">
+        学AI，你不需要先会。你只需要一个想做的东西。在这里，我们帮你把脑子里的想法，变成一个真实的AI小产品。
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>
+          <span>学AI，</span>
+          <span>你不需要先会</span>
+          <span class="en">You Don't Need to Learn First — Just Start Making</span>
+        </h1>
+
+        <div class="manifesto">
+          你不需要先学完Python、机器学习、深度学习再开始做AI产品。<br />
+          你只需要一个想做的东西，和愿意把它做出来的冲动。<br />
+          我不会写代码，但我做了15+个AI产品。现在我想帮你也做出来。
+        </div>
+
+        <div class="cta-row">
+          <button class="primary" onclick="scrollToProducts()">看看我能做什么</button>
+          <button onclick="openModal('workshop')">工作坊详情</button>
+        </div>
+      </div>
+
+      <div class="cube-stage">
+        <div class="orbit"></div>
+        <div class="orbit"></div>
+
+        <div class="floating-shape shape-a"></div>
+        <div class="floating-shape shape-b"></div>
+        <div class="floating-shape shape-c"></div>
+
+        <div class="cube">
+          <div class="face f1" onclick="openModal('assistant')">
+            小帮主任
+            <small>AI 班主任助手</small>
+          </div>
+          <div class="face f2" onclick="openModal('reading')">
+            泡泡阅读侠
+            <small>校园阅读助手</small>
+          </div>
+          <div class="face f3" onclick="openModal('todo')">
+            待办神签
+            <small>修仙风防拖延</small>
+          </div>
+          <div class="face f4" onclick="openModal('questionbank')">
+            无敌花题集
+            <small>AI 题库工具</small>
+          </div>
+          <div class="face f5" onclick="openModal('wiki')">
+            Wiki知识管理
+            <small>AI 分身</small>
+          </div>
+          <div class="face f6" onclick="openModal('workshop')">
+            加入我们
+            <small>Woder AI</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="products" id="products">
+      <h2 class="section-title">我做过的小产品</h2>
+
+      <div class="product-grid">
+        <article class="product-card" onclick="openModal('assistant')">
+          <div class="product-no">PRODUCT 01</div>
+          <h3>小帮主任</h3>
+          <p>
+            AI班主任助手。针对乡村教育班级管理困境开发，学生行为智能记录、积分量化管理。
+          </p>
+        </article>
+
+        <article class="product-card" onclick="openModal('reading')">
+          <div class="product-no">PRODUCT 02</div>
+          <h3>泡泡阅读侠</h3>
+          <p>
+            校园阅读智能助手。基于ESP32主板，语音识别、自动录入、大语言模型交互。
+          </p>
+        </article>
+
+        <article class="product-card" onclick="openModal('todo')">
+          <div class="product-no">PRODUCT 03</div>
+          <h3>待办神签</h3>
+          <p>
+            修仙风防拖延APP。随机抽签代替按计划，三段式时间窗口防糊弄，灵气值成长反馈。
+          </p>
+        </article>
+
+        <article class="product-card" onclick="openModal('questionbank')">
+          <div class="product-no">PRODUCT 04</div>
+          <h3>无敌花题集</h3>
+          <p>
+            AI智能题库工具，支持题目生成、分类管理、错题复习。
+          </p>
+        </article>
+
+        <article class="product-card" onclick="openModal('wiki')">
+          <div class="product-no">PRODUCT 05</div>
+          <h3>Wiki知识管理与AI分身</h3>
+          <p>
+            个人知识库搭建与AI数字分身，实现个性化知识管理和智能助手。
+          </p>
+        </article>
+
+        <article class="product-card" onclick="openModal('more')">
+          <div class="product-no">PRODUCT 06</div>
+          <h3>其他产品...</h3>
+          <p>
+            成长教练AI、心域小灯、答题器尺子、抽签干活等15+个小产品。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="workshop-section">
+      <h2>做，就是最好的学习。</h2>
+      <div class="tags">
+        <span class="tag">零基础友好</span>
+        <span class="tag">不做理论堆砌</span>
+        <span class="tag">实际项目驱动</span>
+        <span class="tag">AI工具赋能</span>
+        <span class="tag">2小时做出原型</span>
+      </div>
+    </section>
+
+    <section class="about-section">
+      <div class="about-card">
+        <h3>关于我</h3>
+        <p>
+          这里是希希。拥有丰富的创新教育经验，曾策划大型PBL夏令营，专注于儿童阅读与性教育领域。
+        </p>
+        <p>
+          2024年从零开始做AI产品——做一个学一个，学一个做一个。至今已开发超过15个AI小产品，覆盖智能硬件开发全流程（前端、后端、APP、客户端软件、网站等）。
+        </p>
+        <p>
+          现于杭州某AI教研公司担任产品运营与B端培训讲师，同时探索AI Agent的设计与架构，工作坊也在筹备中。
+        </p>
+      </div>
+
+      <div class="about-card">
+        <h3>我的方法</h3>
+        <ul>
+          <li>感到哪里不对劲 → 抓住一个真实问题</li>
+          <li>给它一个隐喻 → 拆成最小交互</li>
+          <li>让AI帮我补骨架 → 用工具做出原型</li>
+          <li>交给真实的人碰一下 → 记录它哪里失效</li>
+          <li>继续改</li>
+        </ul>
+        <p style="margin-top: 16px;">
+          我不是先学会了再做的——我是做着做着就会了。
+        </p>
+      </div>
+    </section>
+
+    <section class="honors">
+      <h2 class="section-title">比赛与认可</h2>
+      <div class="honor-grid">
+        <div class="honor-card" onclick="openModal('honor1')">
+          <strong>百度千帆杯 AI原生应用创意挑战赛</strong><br />
+          教育生态行业赛总决赛优秀作品奖
+        </div>
+        <div class="honor-card" onclick="openModal('honor2')">
+          <strong>2024 百度云智大会</strong><br />
+          展位路演
+        </div>
+        <div class="honor-card" onclick="openModal('honor3')">
+          <strong>腾讯第五届科创营</strong><br />
+          铜鹅伴奖
+        </div>
+        <div class="honor-card" onclick="openModal('honor4')">
+          <strong>第十三届全国挑战杯创业计划竞赛</strong><br />
+          广东省银奖
+        </div>
+        <div class="honor-card" onclick="openModal('honor5')">
+          <strong>复旦大学国金</strong><br />
+          可持续发展课程案例入选
+        </div>
+        <div class="honor-card" onclick="openModal('honor6')">
+          <strong>百度开发者中心</strong><br />
+          受邀线上直播分享（资深开发者身份）
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <h2>关注公众号「Woder AI」</h2>
+      <p>你的第一个AI产品，从这里开始。</p>
+      <button class="primary" onclick="openModal('workshop')">了解更多工作坊</button>
+    </section>
+
+    <footer>
+      Woder AI — "做"就是最好的学习 | 适合老师、设计师、创业者、学生
+    </footer>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="close" onclick="closeModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const modals = {
+      workshop: {
+        title: "Woder AI 工作坊",
+        body: `
+          <p>
+            <strong>我们不教代码语法，不讲理论。我们只做一件事：帮你把脑子里的想法，变成一个真实的AI小产品。</strong>
+          </p>
+          <p>
+            不管你是老师、设计师、创业者、学生，还是单纯觉得"我有想法但不知道怎么实现"的人——这里就是你的起点。
+          </p>
+          <h3 style="margin-top: 24px;">近期活动</h3>
+          <ul>
+            <li><strong>「属于自己的 APP」工作坊</strong><br />
+            2小时，线上或线下。你带着一个想法来，带着一个属于自己的APP（或半成品）走。不需要任何编程基础。</li>
+            <li><strong>《聊聊小产品的设计思路与技术落地》</strong><br />
+            分享我15+个AI产品的实战经验</li>
+          </ul>
+          <h3 style="margin-top: 24px;">未来计划</h3>
+          <ul>
+            <li>AI分身工作坊</li>
+            <li>AI知识管理工作坊</li>
+            <li>AI + 教研交流</li>
+            <li>Agent设计交流</li>
+          </ul>
+          <p style="margin-top: 24px; font-size: 20px; font-weight: bold;">
+            关注公众号「Woder AI」，加入我们。
+          </p>
+        `
+      },
+
+      assistant: {
+        title: "PRODUCT 01｜小帮主任 — AI班主任助手",
+        body: `
+          <p>
+            针对乡村教育班级管理困境开发的教师端AI微信助手 + 学生端调查小助手。
+          </p>
+          <h3 style="margin-top: 16px;">技术栈</h3>
+          <ul>
+            <li>Python + Flask 后端</li>
+            <li>JavaScript 前端</li>
+            <li>学生行为智能记录</li>
+            <li>积分量化管理系统</li>
+            <li>数据驱动迭代</li>
+          </ul>
+          <p style="margin-top: 16px;">
+            从一个叫"小判官"的好玩想法，长成了一个真正落地的产品。
+          </p>
+          <div class="modal-image-placeholder" style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [产品截图/界面图片位置]
+          </div>
+        `
+      },
+
+      reading: {
+        title: "PRODUCT 02｜泡泡阅读侠 — 校园阅读智能助手",
+        body: `
+          <p>
+            基于ESP32主板，集成语音识别、自动录入、大语言模型智能交互。
+          </p>
+          <h3 style="margin-top: 16px;">功能亮点</h3>
+          <ul>
+            <li>聊天陪伴</li>
+            <li>语音借阅</li>
+            <li>数据查询分析</li>
+            <li>AI教师端</li>
+          </ul>
+          <p style="margin-top: 16px;">
+            腾讯科创营铜鹅伴奖 · 试用阶段学生阅读频率显著提升<br />
+            全网无参考项目 · 从电子信号原理开始自学 · 独立开发
+          </p>
+          <div class="modal-image-placeholder" style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [产品截图/界面图片位置]
+          </div>
+        `
+      },
+
+      todo: {
+        title: "PRODUCT 03｜待办神签 — 修仙风防拖延APP",
+        body: `
+          <p>
+            修仙风格，logo是一只黄鼠狼。
+          </p>
+          <h3 style="margin-top: 16px;">核心机制</h3>
+          <ul>
+            <li><strong>随机抽签代替按计划</strong>（P人友好）</li>
+            <li><strong>三段式时间窗口</strong>防糊弄防拖延</li>
+            <li><strong>灵气值 + 修仙境界</strong>成长反馈</li>
+          </ul>
+          <p style="margin-top: 16px;">
+            每一个机制都是从我自己作为重度拖延症患者的日子里长出来的。
+          </p>
+          <div class="modal-image-placeholder" style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [产品截图/界面图片位置]
+          </div>
+        `
+      },
+
+      questionbank: {
+        title: "PRODUCT 04｜无敌花题集",
+        body: `
+          <p>
+            AI智能题库工具，支持题目生成、分类管理、错题复习。
+          </p>
+          <h3 style="margin-top: 16px;">功能特点</h3>
+          <ul>
+            <li>AI自动生成题目</li>
+            <li>智能分类管理</li>
+            <li>错题本与复习提醒</li>
+            <li>个性化学习路径</li>
+          </ul>
+          <p style="margin-top: 16px;">
+            让学习更有针对性，告别题海战术。
+          </p>
+          <div class="modal-image-placeholder" style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [产品截图/界面图片位置]
+          </div>
+        `
+      },
+
+      wiki: {
+        title: "PRODUCT 05｜Wiki知识管理与AI分身",
+        body: `
+          <p>
+            个人知识库搭建与AI数字分身，实现个性化知识管理和智能助手。
+          </p>
+          <h3 style="margin-top: 16px;">核心能力</h3>
+          <ul>
+            <li>Wiki知识库构建</li>
+            <li>AI数字分身定制</li>
+            <li>个性化知识管理</li>
+            <li>智能问答与检索</li>
+          </ul>
+          <p style="margin-top: 16px;">
+            探索数字人在教育和个人成长领域的应用边界。
+          </p>
+          <div class="modal-image-placeholder" style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [产品截图/界面图片位置]
+          </div>
+        `
+      },
+
+      more: {
+        title: "更多AI小产品",
+        body: `
+          <p>
+            我做过的AI小产品超过15个，涵盖教育、效率、情感、数字人等方向：
+          </p>
+          <ul>
+            <li>成长教练 AI</li>
+            <li>心域小灯</li>
+            <li>答题器尺子</li>
+            <li>抽签干活</li>
+            <li>小咕噜</li>
+            <li>HuahuaApp</li>
+            <li>AI 小智</li>
+            <li>AI 角色设计</li>
+            <li>……</li>
+          </ul>
+          <p style="margin-top: 16px;">
+            对我来说，做产品就是学习。每一个都是我理解AI能力边界的方式。<br />
+            不是为了简历好看，是因为真的想做。
+          </p>
+        `
+      },
+
+      honor1: {
+        title: "百度千帆杯 AI原生应用创意挑战赛",
+        body: `
+          <p>教育生态行业赛总决赛优秀作品奖</p>
+          <p style="margin-top: 16px; line-height: 1.8;">
+            参赛作品：小帮主任 — AI班主任助手<br />
+            获奖时间：2024年
+          </p>
+          <div style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [证书/奖杯图片位置]
+          </div>
+        `
+      },
+
+      honor2: {
+        title: "2024 百度云智大会",
+        body: `
+          <p>展位路演嘉宾</p>
+          <p style="margin-top: 16px; line-height: 1.8;">
+            展示项目：泡泡阅读侠<br />
+            活动时间：2024年
+          </p>
+          <div style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [活动照片/展位图片位置]
+          </div>
+        `
+      },
+
+      honor3: {
+        title: "腾讯第五届科创营",
+        body: `
+          <p>铜鹅伴奖</p>
+          <p style="margin-top: 16px; line-height: 1.8;">
+            参赛作品：泡泡阅读侠<br />
+            获奖时间：2024年
+          </p>
+          <div style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [证书/奖杯图片位置]
+          </div>
+        `
+      },
+
+      honor4: {
+        title: "第十三届全国挑战杯创业计划竞赛",
+        body: `
+          <p>广东省银奖</p>
+          <p style="margin-top: 16px; line-height: 1.8;">
+            参赛项目：乡村教育AI解决方案<br />
+            获奖时间：2024年
+          </p>
+          <div style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [证书/奖杯图片位置]
+          </div>
+        `
+      },
+
+      honor5: {
+        title: "复旦大学国金",
+        body: `
+          <p>可持续发展课程案例入选</p>
+          <p style="margin-top: 16px; line-height: 1.8;">
+            案例主题：AI赋能乡村教育创新实践<br />
+            入选时间：2024年
+          </p>
+          <div style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [证书/案例封面图片位置]
+          </div>
+        `
+      },
+
+      honor6: {
+        title: "百度开发者中心",
+        body: `
+          <p>受邀线上直播分享（资深开发者身份）</p>
+          <p style="margin-top: 16px; line-height: 1.8;">
+            分享主题：零基础做AI产品的实践经验<br />
+            直播时间：2024年
+          </p>
+          <div style="margin-top: 16px; padding: 20px; background: rgba(17,17,17,0.05); border: 2px dashed rgba(17,17,17,0.3); border-radius: 4px; text-align: center; color: rgba(17,17,17,0.4);">
+            [直播截图/证书图片位置]
+          </div>
+        `
+      }
+    };
+
+    function openModal(key) {
+      const modal = modals[key];
+      const modalContent = document.getElementById("modalContent");
+      const modalBackdrop = document.getElementById("modalBackdrop");
+
+      modalContent.innerHTML = `
+        <h2>${modal.title}</h2>
+        ${modal.body}
+      `;
+
+      modalBackdrop.classList.add("active");
+    }
+
+    function closeModal(event) {
+      if (!event || event.target.id === "modalBackdrop" || event.target.classList.contains("close")) {
+        document.getElementById("modalBackdrop").classList.remove("active");
+      }
+    }
+
+    function scrollToProducts() {
+      document.getElementById("products").scrollIntoView({
+        behavior: "smooth"
+      });
+    }
+
+    window.addEventListener("keydown", function(event) {
+      if (event.key === "Escape") {
+        document.getElementById("modalBackdrop").classList.remove("active");
+      }
+    });
+  </script>
+</body>
+</html>
