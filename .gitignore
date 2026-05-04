@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+dist/
+build/
+coverage/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Tool caches and snapshots
+.snapshots/
+.trae/
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Editor directories
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Personal folders (excluded from git)
+2023~2025支教成就/
+2025.8~至今工作/
+
+# Document files
+*.pdf
+*.docx
+*.doc
+*.xlsx
+*.pptx
+*.md
+
+# Image files  
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.mp4
+*.webp
+
+# Other personal files
+woder公众号第一篇，初稿.pdf
+《拥抱不确定的未来：从规划到行动》_rY1hXP4V3zUUT1tmnHVU5q.docx
+陈奕希.doc
+
+# Python files (if not needed)
+*.py
+__pycache__/
+
+# Backup files
+*.bak
+*.tmp
