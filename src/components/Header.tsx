@@ -1,13 +1,18 @@
 import React from 'react'
+import { SiteContent } from '@/types/siteContent'
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  site: SiteContent['site']
+}
+
+const Header: React.FC<HeaderProps> = ({ site }) => {
   return (
-    <header className="flex justify-between items-start gap-[24px] mb-[48px] flex-wrap">
+    <header className="flex flex-wrap items-start justify-between gap-[24px] mb-[48px]">
       <div className="flex items-center gap-2 px-4 py-2 border-3 border-black bg-yellow shadow-[4px_4px_0_#111] transform -rotate-2 font-black">
-        ▣ Woder AI 工作坊
+        {site.badge}
       </div>
       <div className="max-w-md border-3 border-black bg-white/70 shadow-[5px_5px_0_#111] px-4 py-3 text-sm leading-relaxed">
-        学AI，你不需要先会。你只需要一个想做的东西。在这里，我们帮你把脑子里的想法，变成一个真实的AI小产品。
+        {site.navNote}
       </div>
     </header>
   )

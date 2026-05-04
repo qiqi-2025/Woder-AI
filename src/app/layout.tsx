@@ -20,7 +20,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className="min-h-screen overflow-x-hidden relative">
         <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(17,17,17,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(17,17,17,0.05)_1px,transparent_1px)] bg-[size:26px_26px] mix-blend-multiply z-0"></div>
         <div className="fixed inset-0 pointer-events-none bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.05)_0px,rgba(0,0,0,0.05)_1px,transparent_1px,transparent_4px)] opacity-25 z-[999]"></div>
-        <main className="relative z-1 w-full max-w-[1180px] mx-auto px-4 py-9">
+        <main className="relative z-1 w-full max-w-[1180px] mx-auto px-4 pt-9 pb-20">
           {children}
         </main>
       </body>

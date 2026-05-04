@@ -50,13 +50,18 @@ Thumbs.db
 *.pptx
 *.md
 
-# Image files  
+# Image files
 *.jpg
 *.jpeg
 *.png
 *.gif
 *.mp4
 *.webp
+!public/images/**/*.jpg
+!public/images/**/*.jpeg
+!public/images/**/*.png
+!public/images/**/*.gif
+!public/images/**/*.webp
 
 # Other personal files
 woder公众号第一篇，初稿.pdf
