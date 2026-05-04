@@ -1,0 +1,140 @@
+---
+description: Woder AI 网站低频内容更新流程
+alwaysApply: false
+---
+
+# Woder AI 网站更新流程
+
+当用户要求更新 Woder AI 网站文案、图片、产品、荣誉、弹窗或 CTA 时，按这个流程处理。
+
+## 关键文件
+
+- 内容数据：`src/content/siteContent.ts`
+- 内容类型：`src/types/siteContent.ts`
+- 图片根目录：`public/images/`
+- 首页组件入口：`src/components/ClientHome.tsx`
+- 统一弹窗：`src/components/SiteModal.tsx`
+
+## 内容更新原则
+
+1. 优先只改 `src/content/siteContent.ts`。
+2. 只有布局、交互、组件能力不够时，才改 `src/components/`。
+3. 不接后端、不接 Sanity，除非用户明确要求。
+4. 不把 `.env`、`.next`、`node_modules`、缓存目录、个人素材目录提交到 Git。
+5. 图片只允许放在 `public/images/` 下并提交。
+
+## 图片放置规范
+
+- 产品图：`public/images/products/`
+- 荣誉/证书图：`public/images/honors/`
+- 公众号二维码：`public/images/qrcode/`
+- 首页图：`public/images/hero/`
+- 其他网站素材：`public/images/misc/`
+
+示例：
+
+- 小帮主任截图：`public/images/products/assistant-01.png`
+- 泡泡阅读侠截图：`public/images/products/reading-01.png`
+- 公众号二维码：`public/images/qrcode/woder-ai-official-account.png`
+
+在 `src/content/siteContent.ts` 里使用时路径以 `/images/...` 开头。
+
+示例：
+
+```ts
+images: [{ src: '/images/products/assistant-01.png', alt: '小帮主任产品截图' }]
+```
+
+## 常见更新任务
+
+### 修改首页 Hero 文案
+
+更新 `siteContent.hero`。
+
+### 修改顶部说明
+
+更新 `siteContent.site.navNote`。
+
+### 修改产品卡片
+
+更新 `siteContent.products` 中对应产品的：
+
+- `title`
+- `shortTitle`
+- `subtitle`
+- `description`
+- `modal.body`
+- `modal.images`
+- `modal.placeholder`
+
+### 新增产品
+
+1. 在 `products` 数组新增一项。
+2. 设置唯一 `id` 和 `modalKey`。
+3. 把新产品的 modal 加入 `siteContent.modals`，当前文件末尾已经通过 `Object.fromEntries(products.map(...))` 自动加入。
+4. 如果要出现在魔方上，再更新 `siteContent.cubeFaces`。
+
+### 修改“加入我们/工作坊”弹窗
+
+更新 `workshopModal`。
+
+### 修改荣誉
+
+更新 `honors` 数组。
+
+### 加公众号二维码
+
+1. 把图片放到 `public/images/qrcode/woder-ai-official-account.png`。
+2. 确认 `workshopModal.images` 已包含：
+
+```ts
+{ src: '/images/qrcode/woder-ai-official-account.png', alt: 'Woder AI 公众号二维码' }
+```
+
+## 验证流程
+
+完成修改后必须运行：
+
+```bash
+$env:Path='D:\nodejs;' + $env:Path; npm run build
+```
+
+如果有 TypeScript、lint、构建错误，先修复。
+
+## 提交流程
+
+1. 检查状态：
+
+```bash
+git status --short
+```
+
+2. 确认不提交：
+
+- `.env*`
+- `.next/`
+- `node_modules/`
+- `.snapshots/`
+- `.trae/`
+- 非 `public/images/` 下的大图片/视频/文档
+
+3. 提交：
+
+```bash
+git add <changed-files>
+git commit -m "Update website content"
+```
+
+4. 推送/同步 GitHub。
+
+如果本机 Git HTTPS/SSH 失败，可使用已有 GitHub API 同步方式，但不要把 token 写入仓库或配置文件。
+
+## 给用户的最终说明
+
+完成后说明：
+
+- 改了哪些内容
+- 图片应放在哪里
+- 构建是否通过
+- 是否已同步 GitHub
+- Vercel 会自动部署
