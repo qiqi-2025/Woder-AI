@@ -91,7 +91,6 @@ jobs:
               await client.put(objectKey, filePath, {
                 headers: {
                   'content-type': contentType,
-                  'content-disposition': 'inline',
                   'cache-control': cacheControl,
                 },
               })
