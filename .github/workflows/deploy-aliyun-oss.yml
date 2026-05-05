@@ -80,20 +80,19 @@ jobs:
                 ? 'public, max-age=31536000, immutable'
                 : 'public, max-age=300'
 
+              try {
+                await client.delete(objectKey)
+              } catch (error) {
+                if (error?.code !== 'NoSuchKey') {
+                  console.warn(`delete skipped for ${objectKey}: ${error.message}`)
+                }
+              }
+
               await client.put(objectKey, filePath, {
                 headers: {
-                  'Content-Type': contentType,
-                  'Content-Disposition': 'inline',
-                  'Cache-Control': cacheControl,
-                },
-              })
-
-              await client.copy(objectKey, objectKey, {
-                headers: {
-                  'x-oss-metadata-directive': 'REPLACE',
-                  'Content-Type': contentType,
-                  'Content-Disposition': 'inline',
-                  'Cache-Control': cacheControl,
+                  'content-type': contentType,
+                  'content-disposition': 'inline',
+                  'cache-control': cacheControl,
                 },
               })
 
