@@ -35,3 +35,13 @@ jobs:
           endpoint: ${{ secrets.ALIYUN_OSS_ENDPOINT }}
           folder: ./out
           skipSetting: true
+
+      - name: Fix OSS object metadata
+        run: |
+          curl -fsSL https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
+          ossutil config -e "https://${{ secrets.ALIYUN_OSS_ENDPOINT }}" -i "${{ secrets.ALIYUN_ACCESS_KEY_ID }}" -k "${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}" -L CH
+          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/index.html" --update content-type:"text/html; charset=utf-8" content-disposition:inline -f
+          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/404.html" --update content-type:"text/html; charset=utf-8" content-disposition:inline -f
+          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/index.txt" --update content-type:"text/plain; charset=utf-8" content-disposition:inline -f || true
+          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/" --include "*.css" --update content-type:"text/css; charset=utf-8" content-disposition:inline -r -f
+          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/" --include "*.js" --update content-type:"application/javascript; charset=utf-8" content-disposition:inline -r -f
