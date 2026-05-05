@@ -88,6 +88,15 @@ jobs:
                 },
               })
 
+              await client.copy(objectKey, objectKey, {
+                headers: {
+                  'x-oss-metadata-directive': 'REPLACE',
+                  'Content-Type': contentType,
+                  'Content-Disposition': 'inline',
+                  'Cache-Control': cacheControl,
+                },
+              })
+
               console.log(`uploaded ${objectKey} (${contentType})`)
             }
           }
