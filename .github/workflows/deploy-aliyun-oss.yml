@@ -26,22 +26,74 @@ jobs:
       - name: Build static site
         run: npm run build
 
-      - name: Deploy to Aliyun OSS
-        uses: fangbinwei/aliyun-oss-website-action@v1
-        with:
-          accessKeyId: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
-          accessKeySecret: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
-          bucket: ${{ secrets.ALIYUN_OSS_BUCKET }}
-          endpoint: ${{ secrets.ALIYUN_OSS_ENDPOINT }}
-          folder: ./out
-          skipSetting: true
+      - name: Install OSS upload dependencies
+        run: npm install ali-oss mime-types --no-save
 
-      - name: Fix OSS object metadata
+      - name: Deploy to Aliyun OSS
+        env:
+          ALIYUN_ACCESS_KEY_ID: ${{ secrets.ALIYUN_ACCESS_KEY_ID }}
+          ALIYUN_ACCESS_KEY_SECRET: ${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}
+          ALIYUN_OSS_BUCKET: ${{ secrets.ALIYUN_OSS_BUCKET }}
+          ALIYUN_OSS_ENDPOINT: ${{ secrets.ALIYUN_OSS_ENDPOINT }}
         run: |
-          curl -fsSL https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
-          ossutil config -e "https://${{ secrets.ALIYUN_OSS_ENDPOINT }}" -i "${{ secrets.ALIYUN_ACCESS_KEY_ID }}" -k "${{ secrets.ALIYUN_ACCESS_KEY_SECRET }}" -L CH
-          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/index.html" --update content-type:"text/html; charset=utf-8" content-disposition:inline -f
-          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/404.html" --update content-type:"text/html; charset=utf-8" content-disposition:inline -f
-          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/index.txt" --update content-type:"text/plain; charset=utf-8" content-disposition:inline -f || true
-          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/" --include "*.css" --update content-type:"text/css; charset=utf-8" content-disposition:inline -r -f
-          ossutil set-meta "oss://${{ secrets.ALIYUN_OSS_BUCKET }}/" --include "*.js" --update content-type:"application/javascript; charset=utf-8" content-disposition:inline -r -f
+          node <<'NODE'
+          const fs = require('fs')
+          const path = require('path')
+          const OSS = require('ali-oss')
+          const mime = require('mime-types')
+
+          const outDir = path.resolve('out')
+          const endpoint = process.env.ALIYUN_OSS_ENDPOINT
+          const region = endpoint.replace('.aliyuncs.com', '')
+
+          const client = new OSS({
+            region,
+            endpoint: `https://${endpoint}`,
+            accessKeyId: process.env.ALIYUN_ACCESS_KEY_ID,
+            accessKeySecret: process.env.ALIYUN_ACCESS_KEY_SECRET,
+            bucket: process.env.ALIYUN_OSS_BUCKET,
+          })
+
+          function walk(directory) {
+            return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+              const fullPath = path.join(directory, entry.name)
+              return entry.isDirectory() ? walk(fullPath) : [fullPath]
+            })
+          }
+
+          function contentTypeFor(filePath) {
+            const ext = path.extname(filePath).toLowerCase()
+            if (ext === '.html') return 'text/html; charset=utf-8'
+            if (ext === '.txt') return 'text/plain; charset=utf-8'
+            if (ext === '.css') return 'text/css; charset=utf-8'
+            if (ext === '.js') return 'application/javascript; charset=utf-8'
+            return mime.lookup(filePath) || 'application/octet-stream'
+          }
+
+          async function main() {
+            const files = walk(outDir)
+
+            for (const filePath of files) {
+              const objectKey = path.relative(outDir, filePath).split(path.sep).join('/')
+              const contentType = contentTypeFor(filePath)
+              const cacheControl = objectKey.startsWith('_next/static/')
+                ? 'public, max-age=31536000, immutable'
+                : 'public, max-age=300'
+
+              await client.put(objectKey, filePath, {
+                headers: {
+                  'Content-Type': contentType,
+                  'Content-Disposition': 'inline',
+                  'Cache-Control': cacheControl,
+                },
+              })
+
+              console.log(`uploaded ${objectKey} (${contentType})`)
+            }
+          }
+
+          main().catch((error) => {
+            console.error(error)
+            process.exit(1)
+          })
+          NODE
