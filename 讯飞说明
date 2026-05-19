@@ -1,0 +1,154 @@
+我来帮你整理这两个功能的实现细节，方便你转给另一个项目的AI。
+
+---
+
+## 一、语音转文字功能实现说明
+
+### 核心依赖
+```python
+import websocket  # WebSocket客户端
+import sounddevice as sd  # 音频录制
+import base64, hashlib, hmac, json, time, threading
+from datetime import datetime, timezone
+from email.utils import format_datetime
+from urllib.parse import urlencode
+```
+
+### 核心类：XunfeiIat
+
+**初始化参数：**
+```python
+iat = XunfeiIat(
+    appid="你的APPID",
+    api_key="你的API_KEY", 
+    api_secret="你的API_SECRET",
+    on_result=None,  # 结果回调
+    on_error=None,   # 错误回调
+    on_status=None   # 状态回调
+)
+```
+
+**调用方式：**
+```python
+# 录制5秒音频并识别
+text = iat.transcribe(seconds=5)
+```
+
+**鉴权URL构建逻辑：**
+```python
+def build_url(self):
+    host = 'iat-api.xfyun.cn'
+    path = '/v2/iat'
+    now = format_datetime(datetime.now(timezone.utc), usegmt=True)
+    signature_origin = f'host: {host}\ndate: {now}\nGET {path} HTTP/1.1'
+    signature_sha = hmac.new(self.api_secret.encode('utf-8'), 
+                            signature_origin.encode('utf-8'), 
+                            hashlib.sha256).digest()
+    signature = base64.b64encode(signature_sha).decode('utf-8')
+    authorization_origin = f'api_key="{self.api_key}",algorithm="hmac-sha256",headers="host date request-line",signature="{signature}"'
+    authorization = base64.b64encode(authorization_origin.encode('utf-8')).decode('utf-8')
+    query = urlencode({'authorization': authorization, 'date': now, 'host': host})
+    return f'wss://{host}{path}?{query}'
+```
+
+**音频配置：**
+- 采样率：16000 Hz
+- 位深度：16-bit (int16)
+- 声道数：单声道
+- 格式：PCM原始数据 + Base64编码
+
+**注意事项：**
+1. 必须在子线程中调用，避免阻塞UI
+2. 需要捕获异常并友好提示（如401鉴权失败）
+3. 默认配置已内置在代码中（第582-584行），可直接使用
+
+---
+
+## 二、文字泡泡框功能实现说明
+
+### 核心类：Bubble
+
+**文件位置**：`desktop_pet.py` 第57-73行
+
+**实现代码：**
+```python
+class Bubble(tk.Toplevel):
+    def __init__(self, master, text):
+        super().__init__(master)
+        self.overrideredirect(True)  # 移除窗口边框
+        self.wm_attributes('-topmost', True)  # 置顶显示
+        self.wm_attributes('-transparentcolor', 'white')  # 白色透明
+        
+        canvas = tk.Canvas(self, bg='white', highlightthickness=0)
+        canvas.pack()
+        
+        font = ('微软雅黑', 10)
+        # 先临时计算文本尺寸
+        temp = tk.Label(self, text=text, font=font)
+        width, height = temp.winfo_reqwidth() + 30, temp.winfo_reqheight() + 24
+        temp.destroy()
+        
+        canvas.config(width=width, height=height + 14)
+        
+        # 绘制圆角矩形背景
+        canvas.create_rectangle(8, 0, width - 8, height, 
+                               fill='#FFF3B0', outline='#FFF3B0')
+        
+        # 绘制小尾巴（三角形）
+        canvas.create_polygon(width//2-8, height, 
+                              width//2, height+12, 
+                              width//2+8, height, 
+                              fill='#FFF3B0', outline='#FFF3B0')
+        
+        # 绘制文本
+        canvas.create_text(width//2, height//2, text=text, font=font, 
+                          width=width - 20, fill='#3a2d1d')
+        
+        # 3.5秒后自动销毁
+        self.after(3500, self.destroy)
+```
+
+**调用方式：**
+```python
+# 在主窗口中创建泡泡
+self.bubble = Bubble(self.root, "你要说的内容")
+
+# 定位到宠物上方（需要计算位置）
+x = self.root.winfo_x() + self.root.winfo_width()//2 - self.bubble.winfo_width()//2
+y = self.root.winfo_y() - self.bubble.winfo_height()
+self.bubble.geometry(f'+{x}+{y}')
+```
+
+**设计要点：**
+
+| 属性 | 值 |
+|------|------|
+| 背景色 | #FFF3B0（淡黄色） |
+| 文字颜色 | #3a2d1d（深棕色） |
+| 字体 | 微软雅黑 10号 |
+| 显示时长 | 3.5秒 |
+| 透明度 | 白色区域完全透明 |
+| 形状 | 圆角矩形 + 底部小三角尾巴 |
+
+**布局策略：**
+1. 泡泡框始终显示在宠物角色的正上方
+2. 自动居中对齐（基于宠物宽度计算）
+3. 拖拽宠物时同步更新泡泡位置
+
+---
+
+## 三、给另一个AI的建议
+
+### 关于语音转文字
+1. **先检查依赖**：确保安装 `websocket-client` 和 `sounddevice`
+2. **配置管理**：建议做一个配置界面让用户输入讯飞的三个密钥
+3. **线程处理**：所有网络请求必须放在后台线程，用 `after` 回到主线程更新UI
+4. **错误处理**：对网络超时、鉴权失败等情况提供友好提示
+
+### 关于文字泡泡框
+1. **使用 Toplevel**：作为独立窗口，便于控制显示/销毁
+2. **透明效果**：通过 `-transparentcolor` 实现不规则形状
+3. **Canvas绘制**：用Canvas画圆角矩形和三角形尾巴，比用图片更灵活
+4. **自动销毁**：设置定时器避免泡泡堆积
+
+如果需要更详细的代码解释，可以让那个AI直接看 `desktop_pet.py` 文件中的 `XunfeiIat` 类（第126-223行）和 `Bubble` 类（第57-73行）。
